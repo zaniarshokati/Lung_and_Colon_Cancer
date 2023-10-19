@@ -17,7 +17,7 @@ class Application:
         self.SAMPLE_SIZE=5000
         self.TEST_BATCH_SIZE=50  
         self.TEST_STEPS=50
-        
+
     def main(self):
         df = self.data_handler.load_data(self.DATA_DIR)
         df = self.data_handler.balance_dataset(df, self.SAMPLE_SIZE)
