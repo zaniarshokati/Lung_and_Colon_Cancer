@@ -1,9 +1,6 @@
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.metrics import Recall, Precision, AUC, RootMeanSquaredError
 from sklearn.metrics import f1_score
-
-from tensorflow.python.keras.callbacks import EarlyStopping
-
 import os
 
 import utilities
