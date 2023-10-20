@@ -168,94 +168,89 @@ class Visualization:
         plt.tight_layout()  # Properly adjust subplot layout
         plt.show()
 
-    
-    def print_info(self, test_gen, preds, print_code, save_dir, subject ):
-        class_dict=test_gen.class_indices
-        labels= test_gen.labels
-        file_names= test_gen.filenames 
-        error_list=[]
-        true_class=[]
-        pred_class=[]
-        prob_list=[]
-        new_dict={}
-        error_indices=[]
-        y_pred=[]
-        for key,value in class_dict.items():
-            new_dict[value]=key             # dictionary {integer of class number: string of class name}
-        # store new_dict as a text fine in the save_dir
-        classes=list(new_dict.values())     # list of string of class names
-        # dict_as_text=str(new_dict)
-        # dict_name= subject + '-' +str(len(classes)) +'.txt'  
-        # dict_path=os.path.join(save_dir,dict_name)    
-        # with open(dict_path, 'w') as x_file:
-        #     x_file.write(dict_as_text)    
-        errors=0      
+    def print_info(self, test_gen, preds, print_code, save_dir, subject):
+        class_dict = test_gen.class_indices
+        labels = test_gen.labels
+        file_names = test_gen.filenames
+        new_dict = {value: key for key, value in class_dict.items()}
+        classes = list(new_dict.values())
+        errors = 0
+        error_list = []
+        true_class = []
+        pred_class = []
+        prob_list = []
+        error_indices = []
+        y_pred = []
+
         for i, p in enumerate(preds):
-            pred_index=np.argmax(p)        
-            true_index=labels[i]  # labels are integer values
-            if pred_index != true_index: # a misclassification has occurred
+            pred_index = np.argmax(p)
+            true_index = labels[i]
+
+            if pred_index != true_index:
+                errors += 1
                 error_list.append(file_names[i])
                 true_class.append(new_dict[true_index])
                 pred_class.append(new_dict[pred_index])
                 prob_list.append(p[pred_index])
-                error_indices.append(true_index)            
-                errors=errors + 1
-            y_pred.append(pred_index)    
-        if print_code !=0:
-            if errors>0:
-                if print_code>errors:
-                    r=errors
-                else:
-                    r=print_code           
-                msg='{0:^28s}{1:^28s}{2:^28s}{3:^16s}'.format('Filename', 'Predicted Class' , 'True Class', 'Probability')
-                self.print_in_color(msg, (0,255,0),(55,65,80))
-                for i in range(r):                
-                    split1=os.path.split(error_list[i])                
-                    split2=os.path.split(split1[0])                
-                    fname=split2[1] + '/' + split1[1]
-                    msg='{0:^28s}{1:^28s}{2:^28s}{3:4s}{4:^6.4f}'.format(fname, pred_class[i],true_class[i], ' ', prob_list[i])
-                    self.print_in_color(msg, (255,255,255), (55,65,60))
-                    #print(error_list[i]  , pred_class[i], true_class[i], prob_list[i])               
+                error_indices.append(true_index)
+            y_pred.append(pred_index)
+
+        if print_code != 0:
+            if errors > 0:
+                r = min(print_code, errors)
+                header = '{0:^28s}{1:^28s}{2:^28s}{3:^16s}'.format('Filename', 'Predicted Class', 'True Class', 'Probability')
+                self.print_in_color(header, (0, 255, 0), (55, 65, 80))
+
+                for i in range(r):
+                    split1, fname = os.path.split(error_list[i])
+                    split2, split1 = os.path.split(split1)
+                    filename = f'{split1}/{fname}'
+                    msg = f'{filename:^28s}{pred_class[i]:^28s}{true_class[i]:^28s}    {prob_list[i]:.4f}'
+                    self.print_in_color(msg, (255, 255, 255), (55, 65, 60))
             else:
-                msg='With accuracy of 100 % there are no errors to print'
-                self.print_in_color(msg, (0,255,0),(55,65,80))
-        if errors>0:
-            plot_bar=[]
-            plot_class=[]
-            for  key, value in new_dict.items():        
-                count=error_indices.count(key) 
-                if count!=0:
-                    plot_bar.append(count) # list contain how many times a class c had an error
-                    plot_class.append(value)   # stores the class 
-            fig=plt.figure()
-            fig.set_figheight(len(plot_class)/3)
-            fig.set_figwidth(10)
+                msg = 'With accuracy of 100%, there are no errors to print'
+                self.print_in_color(msg, (0, 255, 0), (55, 65, 80))
+
+        if errors > 0:
+            plot_bar = []
+            plot_class = []
+
+            for key, value in new_dict.items():
+                count = error_indices.count(key)
+                if count != 0:
+                    plot_bar.append(count)
+                    plot_class.append(value)
+
+            fig = plt.figure(figsize=(10, len(plot_class) / 3))
             plt.style.use('fivethirtyeight')
-            for i in range(0, len(plot_class)):
-                c=plot_class[i]
-                x=plot_bar[i]
-                plt.barh(c, x, )
-                plt.title( ' Errors by Class on Test Set')
-        y_true= np.array(labels)        
-        y_pred=np.array(y_pred)
-        if len(classes)<= 30:
-            # create a confusion matrix 
-            cm = confusion_matrix(y_true, y_pred )        
-            length=len(classes)
-            if length<8:
-                fig_width=8
-                fig_height=8
+
+            for i in range(len(plot_class)):
+                c, x = plot_class[i], plot_bar[i]
+                plt.barh(c, x)
+
+            plt.title('Errors by Class on Test Set')
+
+        y_true = np.array(labels)
+        y_pred = np.array(y_pred)
+
+        if len(classes) <= 30:
+            cm = confusion_matrix(y_true, y_pred)
+            length = len(classes)
+
+            if length < 8:
+                fig_width, fig_height = 8, 8
             else:
-                fig_width= int(length * .5)
-                fig_height= int(length * .5)
+                fig_width, fig_height = int(length * 0.5), int(length * 0.5)
+
             plt.figure(figsize=(fig_width, fig_height))
-            sns.heatmap(cm, annot=True, vmin=0, fmt='g', cmap='Blues', cbar=False)       
-            plt.xticks(np.arange(length)+.5, classes, rotation= 90)
-            plt.yticks(np.arange(length)+.5, classes, rotation=0)
+            sns.heatmap(cm, annot=True, vmin=0, fmt='g', cmap='Blues', cbar=False)
+            plt.xticks(np.arange(length) + 0.5, classes, rotation=90)
+            plt.yticks(np.arange(length) + 0.5, classes, rotation=0)
             plt.xlabel("Predicted")
             plt.ylabel("Actual")
             plt.title("Confusion Matrix")
             plt.show()
+
         clr = classification_report(y_true, y_pred, target_names=classes)
         print("Classification Report:\n----------------------\n", clr)
 
