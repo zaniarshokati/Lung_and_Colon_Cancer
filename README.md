@@ -36,8 +36,8 @@ This project focuses on lung cancer detection using transfer learning with Xcept
 
 ## License
 
-    This project is licensed under the Apache 2.0 License - see the LICENSE file for details.
+This project is licensed under the Apache 2.0 License - see the LICENSE file for details.
 
 ## Acknowledgments
 
-    This project is inspired from [Kaggle](https://www.kaggle.com/code/soyabulislamlincoln/lung-and-colon-cancer-xceptionnet-mobilenet).
+This project is inspired from [Kaggle](https://www.kaggle.com/code/soyabulislamlincoln/lung-and-colon-cancer-xceptionnet-mobilenet).
