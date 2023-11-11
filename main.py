@@ -2,15 +2,15 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.metrics import Recall, Precision, AUC, RootMeanSquaredError
 import os
 
-import utilities
+import utils
 
 
 # Generate data paths with labels
 class Application:
     def __init__(self) -> None:
-        self.data_handler = utilities.HandleData()
-        self.visualizer = utilities.Visualization()
-        self.model_handler = utilities.HandleModel()
+        self.data_handler = utils.HandleData()
+        self.visualizer = utils.Visualization()
+        self.model_handler = utils.HandleModel()
         self.DATA_DIR = "data"
         self.SAMPLE_SIZE = 5000
         self.TEST_BATCH_SIZE = 50
