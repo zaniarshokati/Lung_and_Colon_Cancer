@@ -55,17 +55,21 @@ class HandleData:
         )     
 
     def balance_dataset(self, df, sample_size):
-        sample_list = []
-        group = df.groupby("labels")
+        # ensure that each class has an equal representation in the resulting dataset
+        # Step 1: Group the DataFrame by the 'labels' column
+        grouped_data = df.groupby("labels")
+
+        # Step 2: Sample instances from each group to achieve balance
         sample_list = [
-            group.get_group(label).sample(
+            grouped_data.get_group(label).sample(
                 sample_size, replace=False, random_state=123, axis=0
             )
             for label in df["labels"].unique()
         ]
-        df = pd.concat(sample_list, axis=0).reset_index(drop=True)
-        # print(len(df))
-        return df
+
+        # Step 3: Concatenate the sampled DataFrames to create a balanced dataset
+        balanced_df = pd.concat(sample_list, axis=0).reset_index(drop=True)
+        return balanced_df
 
     def split_data(self, df):
         train_df, test_valid_df = train_test_split(
@@ -77,7 +81,7 @@ class HandleData:
             shuffle=True,
             random_state=123,
         )
-        # print('train_df length:', len(train_df), 'test_df length:', len(test_df), 'valid_df length:', len(valid_df))
+        print('train_df length:', len(train_df), 'test_df length:', len(test_df), 'valid_df length:', len(valid_df))
         return train_df, test_df, valid_df
 
     def create_data_generators(
