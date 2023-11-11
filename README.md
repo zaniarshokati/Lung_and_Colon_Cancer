@@ -35,4 +35,5 @@ This project focuses on lung cancer detection using transfer learning with Xcept
     python main.py
 
 ## License
+
     This project is licensed under the Apache 2.0 License - see the LICENSE file for details.
