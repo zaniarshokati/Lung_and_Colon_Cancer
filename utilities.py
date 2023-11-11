@@ -94,12 +94,12 @@ class HandleData:
         test_batch_size=50,
     ):
         # Custom preprocessing function to scale pixel values between -1 and +1
-        def scale_image(img):
+        def _scale_image(img):
             return img / 127.5 - 1
 
         # Data augmentation and preprocessing
         datagen = ImageDataGenerator(
-            preprocessing_function=scale_image,
+            preprocessing_function=_scale_image,
         )
 
         # Create data generators
