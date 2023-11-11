@@ -1,4 +1,4 @@
-# Lung Cancer Detection Using Transfer Learning
+# Lung and Colon Cancer Detection Using Transfer Learning
 
 This project focuses on lung cancer detection using transfer learning with Xception and MobileNet architectures. The dataset used in this project can be downloaded from [Kaggle](https://www.kaggle.com/datasets/andrewmvd/lung-and-colon-cancer-histopathological-images/data).
 
