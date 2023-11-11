@@ -37,19 +37,22 @@ class HandleData:
         self.test_size = 0.1
         self.data = []
 
-    def load_data(self, DATA_DIR):
-        for root, dirs, files in os.walk(DATA_DIR):
+    def load_data(self, data_path, excluded_dirs=["lung_image_sets", "colon_image_sets"]):
+        for root, dirs, files in os.walk(data_path):
             for cls in dirs:
-                if cls not in ["lung_image_sets", "colon_image_sets"]:
+                if cls not in excluded_dirs:
                     class_path = os.path.join(root, cls)
-                    for f in os.listdir(class_path):
-                        self.data.append(
-                            {"filepaths": os.path.join(class_path, f), "labels": cls}
-                        )
+                    self._process_class_directory(class_path, cls)
 
         df = pd.DataFrame(self.data)
-        # print(df['labels'].value_counts())
+        print(df['labels'].value_counts())
         return df
+    
+    def _process_class_directory(self, class_path, cls):
+        files_in_class = [f for f in os.listdir(class_path) if os.path.isfile(os.path.join(class_path, f))]
+        self.data.extend(
+            {"filepaths": os.path.join(class_path, f), "labels": cls} for f in files_in_class
+        )     
 
     def balance_dataset(self, df, sample_size):
         sample_list = []
