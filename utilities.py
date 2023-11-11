@@ -37,7 +37,9 @@ class HandleData:
         self.test_size = 0.1
         self.data = []
 
-    def load_data(self, data_path, excluded_dirs=["lung_image_sets", "colon_image_sets"]):
+    def load_data(
+        self, data_path, excluded_dirs=["lung_image_sets", "colon_image_sets"]
+    ):
         for root, dirs, files in os.walk(data_path):
             for cls in dirs:
                 if cls not in excluded_dirs:
@@ -45,14 +47,19 @@ class HandleData:
                     self._process_class_directory(class_path, cls)
 
         df = pd.DataFrame(self.data)
-        print(df['labels'].value_counts())
+        print(df["labels"].value_counts())
         return df
-    
+
     def _process_class_directory(self, class_path, cls):
-        files_in_class = [f for f in os.listdir(class_path) if os.path.isfile(os.path.join(class_path, f))]
+        files_in_class = [
+            f
+            for f in os.listdir(class_path)
+            if os.path.isfile(os.path.join(class_path, f))
+        ]
         self.data.extend(
-            {"filepaths": os.path.join(class_path, f), "labels": cls} for f in files_in_class
-        )     
+            {"filepaths": os.path.join(class_path, f), "labels": cls}
+            for f in files_in_class
+        )
 
     def balance_dataset(self, df, sample_size):
         # ensure that each class has an equal representation in the resulting dataset
@@ -81,7 +88,14 @@ class HandleData:
             shuffle=True,
             random_state=123,
         )
-        print('train_df length:', len(train_df), 'test_df length:', len(test_df), 'valid_df length:', len(valid_df))
+        print(
+            "train_df length:",
+            len(train_df),
+            "test_df length:",
+            len(test_df),
+            "valid_df length:",
+            len(valid_df),
+        )
         return train_df, test_df, valid_df
 
     def create_data_generators(
@@ -342,9 +356,8 @@ class HandleModel:
         dense = Dense(512, activation="relu")(dense)
         dense = Dense(units=256, activation="relu")(dense)
         predictions = Dense(num_classes, activation="softmax")(dense)
-        # compile the model
-        # this is the model we will train
         model = Model(inputs=input_layer, outputs=predictions)
+
         return model
 
     def train_model(self, train_generator, valid_generator, model, model_name, epochs):

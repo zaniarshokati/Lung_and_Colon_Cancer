@@ -16,7 +16,7 @@ class Application:
         self.TEST_BATCH_SIZE = 50
         self.TEST_STEPS = 50
 
-    def main(self):
+    def process(self):
         df = self.data_handler.load_data(self.DATA_DIR)
         df = self.data_handler.balance_dataset(df, self.SAMPLE_SIZE)
 
@@ -88,4 +88,4 @@ class Application:
 
 if __name__ == "__main__":
     app = Application()
-    app.main()
+    app.process()
